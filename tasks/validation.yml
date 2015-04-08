@@ -42,19 +42,3 @@
       - "item.password is defined"
   with_items: ( postgresql_users + postgresql_users_replication )
 
-- set_fact:
-    validate_dbs: []
-    temp: []
-
-- set_fact: "{{ validate_dbs + '=' + '[' + validate_dbs + ',' + item.databases + ']'  }}"
-  when: item.databases is defined
-  with_items: ( postgresql_users + postgresql_users_replication )
-
-- debug: var=validate_dbs
-
-
-- assert:
-    that:
-      - "item.connection in ['local','host','hostssl','hostnossl']"
-      - "item.connection in ['host','hostssl','hostnossl'] and item.address is defined"
-  with_items: validate_dbs
