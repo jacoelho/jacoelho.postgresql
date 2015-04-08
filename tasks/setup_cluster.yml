@@ -1,6 +1,5 @@
 ---
 
-
 - name: check cluster configuration
   sudo_user: postgres
   sudo: yes
@@ -11,14 +10,14 @@
 - name: check postgresql encoding
   sudo_user: postgres
   sudo: yes
-  command: psql -U postgres -d postgres -t  -c "select setting from pg_settings where name = 'server_encoding';"
+  shell: psql -U postgres -d postgres -t  -c "select setting from pg_settings where name = 'server_encoding';" || echo ""
   changed_when: false
   register: server_encoding
 
 - name: check postgresql lctype
   sudo_user: postgres
   sudo: yes
-  command: psql -U postgres -d postgres -t  -c "select setting from pg_settings where name = 'lc_ctype';"
+  shell: psql -U postgres -d postgres -t  -c "select setting from pg_settings where name = 'lc_ctype';" || echo ""
   changed_when: false
   register: server_lc_ctype
 
@@ -36,8 +35,6 @@
     and
     "postgresql_locale in server_lc_ctype.stdout"
     )}}'
-
-- debug: var=initialize_cluster
 
 - name: check permissions data_directory
   sudo: yes

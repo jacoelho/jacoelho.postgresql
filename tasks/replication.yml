@@ -1,0 +1,58 @@
+---
+
+- name: replication | check if correctly configured
+  assert:
+    that:
+      - "postgresql_config.listen_addresses is defined"
+      - "postgresql_config.wal_level is defined"
+      - "postgresql_config.wal_buffers is defined"
+      - "postgresql_config.wal_keep_segments is defined"
+      - "postgresql_config.max_wal_senders is defined"
+      - "postgresql_config.checkpoint_segments is defined"
+
+- name: replication | check master configuration
+  assert:
+    that:
+      - "postgresql_config.wal_level == 'hot_standby'"
+  when: postgresql_replication_role == 'master'
+
+- name: replication | check slave configuration
+  assert:
+    that:
+      - "postgresql_config.hot_standby == 'on'"
+  when: postgresql_replication_role == 'slave'
+
+- name: stop postgresql server
+  sudo: yes
+  service:
+    name: postgresql
+    state: stopped
+  when: postgresql_replication_role == 'slave'
+
+- name: remove data_directory
+  sudo: yes
+  file:
+    path: "{{ postgresql_config.data_directory }}"
+    state: absent
+  when: postgresql_replication_role == 'slave'
+
+- name: replication | postgresql initial replication
+  sudo: yes
+  sudo_user: postgres
+  shell: >
+    PGPASSWORD={{ pg_password }} pg_basebackup
+    -X stream -h {{ master_ip }}
+    -D {{ postgresql_config.data_directory }}
+    -U {{ pg_user }} -v -P
+  when: postgresql_replication_role == 'slave'
+  notify: restart postgresql
+
+- name: replication | create recovery.conf file
+  sudo: yes
+  template:
+    src: recovery.conf.j2
+    dest: "{{ postgresql_config.data_directory }}/recovery.conf"
+    owner: postgres
+    group: postgres
+  when: postgresql_replication_role == 'slave'
+

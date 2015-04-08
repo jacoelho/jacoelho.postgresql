@@ -32,4 +32,5 @@
     owner: postgres
     group: postgres
   notify: reload postgresql
+  tags: postgresl_users
 

@@ -2,14 +2,22 @@
 
 - include: apt.yml
   when: ansible_os_family == 'Debian'
+  tags: postgresl_packages
 
-- include: data_directory.yml
+- include: setup_cluster.yml
+  tags: postgresl_cluster
+
+- include: replication.yml
+  when: postgresql_replication
 
 - include: configuration.yml
+  tags: postgresl_configuration
 
 - include: setup_users.yml
+  tags: postgresl_users
 
 - include: setup_databases.yml
+  tags: postgresl_databases
 
 #- include: setup_privileges.yml
 
