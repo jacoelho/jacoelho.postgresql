@@ -1,0 +1,13 @@
+---
+
+- name: create databases
+  sudo_user: postgres
+  postgresql_db:
+    name: "{{ item.database }}"
+    owner:  "{{ item.owner | default(None) }}"
+    encoding: "{{ item.encoding | default('UTF-8') }}"
+    template: "{{ item.template | default(None) }}"
+    lc_collate: "{{ item.locale | default('en_US.utf8') }}"
+    lc_ctype: "{{ item.locale | default('en_US.utf8') }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: postgresql_databases

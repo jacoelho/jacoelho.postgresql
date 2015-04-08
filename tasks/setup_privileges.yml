@@ -1,0 +1,18 @@
+---
+
+#- debug: msg="{{ item.databases| map(attribute='priv') | list }}"
+#  with_items: postgresql_users
+#
+#- debug: msg="{{ item.databases }}"
+#  with_items: postgresql_users
+
+- debug: msg="{{ item.1.name  }}"
+  with_subelements:
+    - postgresql_users
+    - databases
+
+#- postgresql_privs: >
+#    db: library
+#    type: group
+#    objs: librarian,reader
+#    roles: alice,bob

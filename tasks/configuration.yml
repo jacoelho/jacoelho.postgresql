@@ -1,0 +1,35 @@
+---
+
+- name: check postgresql directories
+  sudo: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: postgres
+    group: postgres
+  with_items:
+    - "/etc/postgresql"
+    - "/etc/postgresql/{{ postgresql_version }}"
+    - "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}"
+
+- name: configure postgresql.conf
+  sudo: yes
+  template:
+    dest: "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/postgresql.conf"
+    src: postgresql.conf.j2
+    mode: 0644
+    owner: postgres
+    group: postgres
+  notify: restart postgresql
+
+- name: configure pg_hba.conf
+  sudo: yes
+  template:
+    dest: "{{ postgresql_config.hba_file }}"
+    src: pg_hba.conf.j2
+    mode: 0644
+    owner: postgres
+    group: postgres
+  notify: reload postgresql
+

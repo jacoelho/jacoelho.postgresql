@@ -1,0 +1,15 @@
+---
+
+- include: apt.yml
+  when: ansible_os_family == 'Debian'
+
+- include: data_directory.yml
+
+- include: configuration.yml
+
+- include: setup_users.yml
+
+- include: setup_databases.yml
+
+#- include: setup_privileges.yml
+

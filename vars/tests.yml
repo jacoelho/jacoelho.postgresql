@@ -1,0 +1,33 @@
+---
+pg_users:
+  - name: john
+    password: "doe"
+#    login_host:
+#    login_user:
+#    login_password:
+#    port:
+    priv: "ALL"
+    role_attr_flags: 'LOGIN,CREATEUSER'
+    state: present
+    database: db
+    connections:
+      - type: host
+        address: "0.0.0.0/0"
+        method: "ident"
+        comment: "testing"
+        map:
+          name: testing
+          systemuser: "{{ ansible_ssh_user }}"
+      - type: host
+        address: "0.0.0.0/0"
+        method: "ident"
+        comment: "testing"
+        map:
+          name: another
+          systemuser: "{{ ansible_ssh_user }}"
+
+pg_databases:
+  - name: db
+    state: present
+  - name: testing
+    state: absent

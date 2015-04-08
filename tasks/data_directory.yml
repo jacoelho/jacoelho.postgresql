@@ -1,0 +1,67 @@
+---
+
+
+- name: check cluster configuration
+  sudo_user: postgres
+  sudo: yes
+  command: pg_lsclusters
+  changed_when: false
+  register: clusters
+
+- name: check postgresql encoding
+  sudo_user: postgres
+  sudo: yes
+  command: psql -U postgres -d postgres -t  -c "select setting from pg_settings where name = 'server_encoding';"
+  changed_when: false
+  register: server_encoding
+
+- name: check postgresql lctype
+  sudo_user: postgres
+  sudo: yes
+  command: psql -U postgres -d postgres -t  -c "select setting from pg_settings where name = 'lc_ctype';"
+  changed_when: false
+  register: server_lc_ctype
+
+- name: assert postgresql configuration
+  set_fact: >
+    initialize_cluster='{{
+    not
+    ("postgresql_version in clusters.stdout"
+    and
+    "postgresql_cluster_name in clusters.stdout"
+    and
+    "postgresql_config.data_directory in clusters.stdout"
+    and
+    "postgresql_encoding in server_encoding.stdout"
+    and
+    "postgresql_locale in server_lc_ctype.stdout"
+    )}}'
+
+- debug: var=initialize_cluster
+
+- name: check permissions data_directory
+  sudo: yes
+  file:
+    path: "{{ postgresql_config.data_directory }}"
+    state: directory
+    mode: 0700
+    owner: postgres
+    group: postgres
+
+- name: stop cluster
+  sudo: yes
+  sudo_user: postgres
+  command: >
+    /usr/bin/pg_dropcluster --stop {{ postgresql_config }} {{ postgresql_cluster_name }}
+  when: initialize_cluster
+
+- name: create cluster
+  sudo: yes
+  sudo_user: postgres
+  command: >
+    /usr/bin/pg_createcluster --start
+    -e {{ postgresql_encoding }}
+    --locale {{ postgresql_locale }}
+    {{ postgresql_version }} {{ postgresql_cluster_name }}
+  when: initialize_cluster
+
