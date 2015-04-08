@@ -9,7 +9,7 @@
 #
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
-{% for user in (postgresql_users_default + postgresql_users) %}
+{% for user in (postgresql_users_default + postgresql_users + postgresql_users_replication) %}
 {% for database in user.databases | default([]) %}
 {{ database.connection }} {{ database.database }} {{ user.user }} {{ database.address | default('') }} {{ database.auth }}
 {% endfor %}

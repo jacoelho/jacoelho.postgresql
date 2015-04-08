@@ -1,0 +1,60 @@
+---
+
+- name: validation | postgresql version
+  assert:
+    that: "postgresql_version in [9.1,9.2,9.3,9.4]"
+
+- name: validation | repository configs
+  assert:
+    that: "postgresql_repository in ['official','distro']"
+
+- name: validation | replication configs
+  assert:
+    that: "postgresql_replication_role in ['master','slave']"
+
+- name: validation | replication requirements
+  assert:
+    that:
+      - "postgresql_config.listen_addresses is defined"
+      - "postgresql_config.wal_level is defined"
+      - "postgresql_config.wal_buffers is defined"
+      - "postgresql_config.wal_keep_segments is defined"
+      - "postgresql_config.max_wal_senders is defined"
+      - "postgresql_config.checkpoint_segments is defined"
+  when: postgresql_replication
+
+- name: validation | replication master configuration
+  assert:
+    that:
+      - "postgresql_config.wal_level == 'hot_standby'"
+  when: postgresql_replication and postgresql_replication_role == 'master'
+
+- name: validation | replication slave configuration
+  assert:
+    that:
+      - "postgresql_config.hot_standby == 'on'"
+  when: postgresql_replication and postgresql_replication_role == 'slave'
+
+- name: validation | user configuration
+  assert:
+    that:
+      - "item.user is defined"
+      - "item.password is defined"
+  with_items: ( postgresql_users + postgresql_users_replication )
+
+- set_fact:
+    validate_dbs: []
+    temp: []
+
+- set_fact: "{{ validate_dbs + '=' + '[' + validate_dbs + ',' + item.databases + ']'  }}"
+  when: item.databases is defined
+  with_items: ( postgresql_users + postgresql_users_replication )
+
+- debug: var=validate_dbs
+
+
+- assert:
+    that:
+      - "item.connection in ['local','host','hostssl','hostnossl']"
+      - "item.connection in ['host','hostssl','hostnossl'] and item.address is defined"
+  with_items: validate_dbs

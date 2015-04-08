@@ -31,6 +31,7 @@
     mode: 0644
     owner: postgres
     group: postgres
+    backup: yes
   notify: reload postgresql
   tags: postgresl_users
 

@@ -1,27 +1,5 @@
 ---
 
-- name: replication | check if correctly configured
-  assert:
-    that:
-      - "postgresql_config.listen_addresses is defined"
-      - "postgresql_config.wal_level is defined"
-      - "postgresql_config.wal_buffers is defined"
-      - "postgresql_config.wal_keep_segments is defined"
-      - "postgresql_config.max_wal_senders is defined"
-      - "postgresql_config.checkpoint_segments is defined"
-
-- name: replication | check master configuration
-  assert:
-    that:
-      - "postgresql_config.wal_level == 'hot_standby'"
-  when: postgresql_replication_role == 'master'
-
-- name: replication | check slave configuration
-  assert:
-    that:
-      - "postgresql_config.hot_standby == 'on'"
-  when: postgresql_replication_role == 'slave'
-
 - name: stop postgresql server
   sudo: yes
   service:

@@ -14,6 +14,16 @@ postgresql_replication_role: master
 postgresql_encoding: UTF-8
 postgresql_locale: en_US.UTF-8
 
+postgresql_users_replication:
+  - user: replication
+    password: "password"
+    state: present
+    databases:
+      - database: replication
+        connection: hostssl
+        address: "10.0.0.0/8"
+        auth: md5
+
 postgresql_users_default:
   - user: postgres
     databases:
@@ -35,17 +45,6 @@ postgresql_users_default:
         auth: trust
 
 postgresql_users:
-  - user: replication
-    password: "password"
-    state: present
-    roles:
-      - login
-      - replication
-    databases:
-      - database: replication
-        connection: hostssl
-        address: "10.0.0.0/8"
-        auth: md5
   - user: postgres
     password: "mypassword"
     state: present
@@ -56,7 +55,7 @@ postgresql_users:
       - replication
     databases:
       - database: xpto
-        connection: host
+        connection: local
         address: "127.0.0.1/32"
         auth: md5
       - database: xpto2
@@ -301,3 +300,9 @@ postgresql_config:
 #include_if_exists: 'exists.conf'
 #include: 'special.conf'
 
+  listen_addresses: "*"
+  wal_level: hot_standby
+  wal_buffers: 16MB
+  wal_keep_segments: 1000
+  max_wal_senders: 3
+  checkpoint_segments: 32
