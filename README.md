@@ -8,11 +8,13 @@ Ansible role to manage postgresql servers, supports:
     - multiple sanity checks
     - basic extensions
     - replication
-    
+
 ### TODO
 
+- [ ] improve config override
 - [ ] support more extensions
 - [ ] privilegies
+- [ ] better test coverage
 
 ### Build Status
 
