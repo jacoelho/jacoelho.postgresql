@@ -4,12 +4,16 @@
   sudo: yes
   sudo_user: postgres
   postgresql_user:
-    name: "{{ item.user }}"
-    password: "{{ item.password }}"
-    role_attr_flags: "{{ item.roles | join(',') | upper | default(None) }}"
-    state: "{{ item.state | default('present') }}"
+    name: "{{ item.0.user }}"
+    password: "{{ item.0.password }}"
+    db: "{{ item.1.database if (item.1.database is defined and item.1.database != 'all') else None }}"
+    role_attr_flags: "{{ (item.0.roles | default('')) | join(',') | upper }}"
+    state: "{{ item.0.state | default('present') }}"
     fail_on_user: no
-  with_items: postgresql_users
+#  with_items: postgresql_users
+  with_subelements_safe:
+    - postgresql_users
+    - databases
 
 - name: create replication postgresql users
   sudo: yes

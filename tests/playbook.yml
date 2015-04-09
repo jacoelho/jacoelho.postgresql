@@ -17,6 +17,22 @@
 - hosts: master
   sudo: yes
 
+  vars:
+    postgresql_users:
+      - user: bla
+        password: cenas
+        databases:
+          - database: all
+            connection: local
+            auth: trust
+          - database: cenas
+            connection: local
+            auth: trust
+      - user: db
+        password: cenas
+        roles:
+          - login
+
   roles:
     - jacoelho.postgresql
 
