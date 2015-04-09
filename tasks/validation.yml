@@ -4,6 +4,11 @@
   assert:
     that: "postgresql_version in [9.1,9.2,9.3,9.4]"
 
+- name: validation | check parameters
+  assert:
+    that: "item.key in postgresql_parameters['{{ postgresql_version | string }}']"
+  with_dict: postgresql_config
+
 - name: validation | repository configs
   assert:
     that: "postgresql_repository in ['official','distro']"

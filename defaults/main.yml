@@ -20,7 +20,7 @@ postgresql_users_replication:
     state: present
     databases:
       - database: replication
-        connection: hostssl
+        connection: host
         address: "10.0.0.0/8"
         auth: md5
 
@@ -56,7 +56,6 @@ postgresql_users:
     databases:
       - database: xpto
         connection: local
-        address: "127.0.0.1/32"
         auth: md5
       - database: xpto2
         connection: host
@@ -83,8 +82,6 @@ postgresql_databases:
     template: "template0"
     locale: "en_US.UTF-8"
     state: present
-
-postgresql_initdb_options: "--locale=en_US.UTF-8 --encoding=UNICODE"
 
 postgresql_config:
   data_directory: '/var/lib/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}'
