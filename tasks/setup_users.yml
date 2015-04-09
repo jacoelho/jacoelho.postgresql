@@ -10,7 +10,6 @@
     role_attr_flags: "{{ (item.0.roles | default('')) | join(',') | upper }}"
     state: "{{ item.0.state | default('present') }}"
     fail_on_user: no
-#  with_items: postgresql_users
   with_subelements_safe:
     - postgresql_users
     - databases

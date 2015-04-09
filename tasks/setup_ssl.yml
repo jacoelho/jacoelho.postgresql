@@ -1,6 +1,5 @@
 ---
 
-
 - name: create ssl directories if needed
   file:
     path: "{{ item }}"
