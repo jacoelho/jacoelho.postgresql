@@ -55,5 +55,5 @@
       - "postgresql_ssl.cert_filepath is defined"
       - "postgresql_ssl.key is defined"
       - "postgresql_ssl.key_filepath is defined"
-    when: postgresql_config.ssl is defined and postgresql_config.ssl == 'on'
+  when: postgresql_config.ssl is defined and postgresql_config.ssl == 'on'
 

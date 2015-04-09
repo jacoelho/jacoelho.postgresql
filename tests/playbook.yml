@@ -3,6 +3,14 @@
 - hosts: travis
   sudo: yes
 
+  vars:
+    postgresql_databases:
+      - database: cenas
+        encoding: "UTF-8"
+        template: "template0"
+        locale: "en_US.UTF-8"
+        state: present
+
   roles:
     - jacoelho.postgresql
 
