@@ -6,7 +6,7 @@
 
 - name: validation | check parameters
   assert:
-    that: "item.key in postgresql_parameters['{{ postgresql_version | string }}']"
+    that: "item.key in postgresql_parameters['{{ postgresql_version }}']"
   with_dict: postgresql_config
 
 - name: validation | repository configs
@@ -46,4 +46,14 @@
       - "item.user is defined"
       - "item.password is defined"
   with_items: ( postgresql_users + postgresql_users_replication )
+
+- name: validation | ssl settings
+  assert:
+    that:
+      - "postgresql_ssl is defined"
+      - "postgresql_ssl.cert is defined"
+      - "postgresql_ssl.cert_filepath is defined"
+      - "postgresql_ssl.key is defined"
+      - "postgresql_ssl.key_filepath is defined"
+    when: postgresql_config.ssl is defined and postgresql_config.ssl == 'on'
 

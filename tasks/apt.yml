@@ -53,3 +53,11 @@
     cache_valid_time: 3600
   when: postgresql_contrib
 
+- name: install postgresql extension whitelisting
+  sudo: yes
+  apt:
+    pkg: "postgresql-{{ postgresql_version }}-pgextwlist"
+    state: present
+  when: '"pg_extwlist" in postgresql_extensions'
+
+

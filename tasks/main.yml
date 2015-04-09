@@ -10,6 +10,9 @@
 - include: setup_cluster.yml
   tags: postgresl_cluster
 
+- include: setup_ssl.yml
+  when: postgresl_configuration.ssl is defined and postgresql_config == 'on'
+
 - include: replication.yml
   when: postgresql_replication
 
