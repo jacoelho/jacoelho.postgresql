@@ -31,7 +31,7 @@
     mode: 0644
     owner: postgres
     group: postgres
-    validate: /bin/sh -c "grep -q validationfailed %s && exit 1"
+#    validate: /bin/sh -c "grep -q validationfailed %s && exit 1"
   notify: reload postgresql
   tags: postgresl_users
 

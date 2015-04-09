@@ -1,7 +1,16 @@
 ---
 
-- hosts: all
+- hosts: master
   sudo: yes
+
+  roles:
+    - jacoelho.postgresql
+
+- hosts: slave*
+  sudo: yes
+
+  vars:
+    postgresql_version: 9.3
 
   roles:
     - jacoelho.postgresql
