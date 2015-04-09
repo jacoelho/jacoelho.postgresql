@@ -18,10 +18,10 @@
   sudo: yes
   sudo_user: postgres
   shell: >
-    PGPASSWORD={{ pg_password }} pg_basebackup
+    PGPASSWORD={{ postgresql_users_replication.0.password }} pg_basebackup
     -X stream -h {{ master_ip }}
     -D {{ postgresql_config.data_directory }}
-    -U {{ pg_user }} -v -P
+    -U {{ postgresql_users_replication.0.user }} -v -P
   when: postgresql_replication_role == 'slave'
   notify: restart postgresql
 

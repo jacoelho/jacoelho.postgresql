@@ -1,5 +1,11 @@
 ---
 
+- hosts: travis
+  sudo: yes
+
+  roles:
+    - jacoelho.postgresql
+
 - hosts: master
   sudo: yes
 
@@ -10,7 +16,34 @@
   sudo: yes
 
   vars:
-    postgresql_version: 9.3
+    postgresql_version: 9.4
+    postgresql_replication_role: slave
+
+    postgresql_config:
+      data_directory: '/var/lib/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}'
+      hba_file: '/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_hba.conf'
+      ident_file: '/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_ident.conf'
+      external_pid_file: '/var/run/postgresql/{{ postgresql_version }}-{{ postgresql_cluster_name }}.pid'
+      max_connections: 100
+      shared_buffers: 128MB
+      log_timezone: 'UTC'
+      datestyle: 'iso, mdy'
+      timezone: 'UTC'
+      lc_messages: 'en_US.utf8'
+      lc_monetary: 'en_US.utf8'
+      lc_numeric: 'en_US.utf8'
+      lc_time: 'en_US.utf8'
+      default_text_search_config: 'pg_catalog.english'
+      listen_addresses: "*"
+      wal_level: hot_standby
+      wal_buffers: 16MB
+      wal_keep_segments: 1000
+      max_wal_senders: 3
+      checkpoint_segments: 32
+      hot_standby: "on"
+
+  pre_tasks:
+    - debug: var=postgresql_config
 
   roles:
     - jacoelho.postgresql

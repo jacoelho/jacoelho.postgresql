@@ -101,7 +101,6 @@ postgresql_config:
   external_pid_file: '/var/run/postgresql/{{ postgresql_version }}-{{ postgresql_cluster_name }}.pid'
   max_connections: 100
   shared_buffers: 128MB
-#  dynamic_shared_memory_type: posix
   log_timezone: 'UTC'
   datestyle: 'iso, mdy'
   timezone: 'UTC'
@@ -110,11 +109,9 @@ postgresql_config:
   lc_numeric: 'en_US.utf8'
   lc_time: 'en_US.utf8'
   default_text_search_config: 'pg_catalog.english'
-
   listen_addresses: "*"
   wal_level: hot_standby
   wal_buffers: 16MB
   wal_keep_segments: 1000
   max_wal_senders: 3
   checkpoint_segments: 32
-#  ssl: on

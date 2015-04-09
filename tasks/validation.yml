@@ -1,5 +1,7 @@
 ---
 
+- debug: var=postgresql_config
+
 - name: validation | postgresql version
   assert:
     that: "postgresql_version in [9.1,9.2,9.3,9.4]"

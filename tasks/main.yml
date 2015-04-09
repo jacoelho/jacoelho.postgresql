@@ -20,9 +20,11 @@
   tags: postgresl_configuration
 
 - include: setup_users.yml
+  when: postgresql_replication and postgresql_replication_role == 'master'
   tags: postgresl_users
 
 - include: setup_databases.yml
+  when: postgresql_replication and postgresql_replication_role == 'master'
   tags: postgresl_databases
 
 #- include: setup_privileges.yml
