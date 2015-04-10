@@ -44,9 +44,7 @@
   assert:
     that:
       - "item.user is defined"
-      - "item.password is defined"
   with_items: ( postgresql_users + postgresql_users_replication )
-
 
 - name: validation | user connection local
   assert:
