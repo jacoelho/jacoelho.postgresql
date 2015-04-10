@@ -11,16 +11,16 @@
 
 {% for user in (postgresql_users_default + postgresql_users + postgresql_users_replication) %}
 {% for database in user.databases | default([]) %}
-{% if not database.auth is defined %}
-# validationfailed
-{% elif database.connection == 'local' and database.address is defined %}
-# validationfailed
-{% elif database.connection in ['host', 'hostssl', 'nohostssl'] and not (database.address is defined) %}
-# validationfailed
-{% elif database.connection == 'hostssl' and (postgresql_config.ssl | default('')) != "on" %}
-# validationfailed
-{% else %}
+  {% if database.connection is defined and database.auth is defined %}
+    {% if database.connection == 'local' and database.address is defined %}
+# validation failed: address defined on local connection
+    {% elif database.connection in ['host', 'hostssl', 'nohostssl'] and not (database.address is defined) %}
+# validation failed: address not defined
+    {% elif database.connection == 'hostssl' and (postgresql_config.ssl | default('')) != "on" %}
+# validation failed: server without ssl enabled
+    {% else %}
 {{ database.connection }} {{ database.database }} {{ user.user }} {{ database.address | default('') }} {{ database.auth }}
+  {% endif %}
 {% endif %}
 {% endfor %}
 {% endfor %}

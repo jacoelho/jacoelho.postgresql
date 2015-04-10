@@ -40,12 +40,40 @@
       - "postgresql_config.hot_standby == 'on'"
   when: postgresql_replication and postgresql_replication_role == 'slave'
 
-- name: validation | user configuration
+- name: validation | user basic configuration
   assert:
     that:
       - "item.user is defined"
       - "item.password is defined"
   with_items: ( postgresql_users + postgresql_users_replication )
+
+
+- name: validation | user connection local
+  assert:
+    that:
+      - "not item.1.address is defined"
+  when: item.1.connection is defined and item.1.connection == 'local'
+  with_subelements_safe:
+    - postgresql_users
+    - databases
+
+- name: validation | user connection host hostssl nohostssl have address defined
+  assert:
+    that:
+      - "item.1.address is defined"
+  when: item.1.connection is defined and item.1.connection in ['host', 'hostssl', 'nohostssl']
+  with_subelements_safe:
+    - postgresql_users
+    - databases
+
+- name: validation | user connection hostssl and server with ssl enabled
+  assert:
+    that:
+      - "postgresql_config.ssl is defined and postgresql_config.ssl == 'on'"
+  when: item.1.connection is defined and item.1.connection == 'hostssl'
+  with_subelements_safe:
+    - postgresql_users
+    - databases
 
 - name: validation | ssl settings
   assert:

@@ -9,7 +9,6 @@
     owner: postgres
     group: postgres
   with_items:
-    - "/etc/postgresql"
     - "/etc/postgresql/{{ postgresql_version }}"
     - "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}"
 
