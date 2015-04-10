@@ -21,21 +21,21 @@ postgresql_users_replication: [ ]
 
 postgresql_users_default:
   - user: postgres
-    databases:
+    connections:
       - database: all
-        connection: local
+        type: local
         auth: trust
   - user: all
-    databases:
+    connections:
       - database: all
-        connection: local
+        type: local
         auth: trust
       - database: all
-        connection: host
+        type: host
         address: 127.0.0.1/32
         auth: trust
       - database: all
-        connection: host
+        type: host
         address: ::1/128
         auth: trust
 

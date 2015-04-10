@@ -46,32 +46,41 @@
       - "item.user is defined"
   with_items: ( postgresql_users + postgresql_users_replication )
 
+- name: validation | user connection databases
+  assert:
+    that:
+    - "'{{ item.1.database }}' in (postgresql_databases | map(attribute='database') | list)"
+  when: item.1.type is defined and item.1.database != 'all'
+  with_subelements_safe:
+    - postgresql_users
+    - connections
+
 - name: validation | user connection local
   assert:
     that:
       - "not item.1.address is defined"
-  when: item.1.connection is defined and item.1.connection == 'local'
+  when: item.1.type is defined and item.1.type == 'local'
   with_subelements_safe:
     - postgresql_users
-    - databases
+    - connections
 
 - name: validation | user connection host hostssl nohostssl have address defined
   assert:
     that:
       - "item.1.address is defined"
-  when: item.1.connection is defined and item.1.connection in ['host', 'hostssl', 'nohostssl']
+  when: item.1.type is defined and item.1.type in ['host', 'hostssl', 'nohostssl']
   with_subelements_safe:
     - postgresql_users
-    - databases
+    - connections
 
 - name: validation | user connection hostssl and server with ssl enabled
   assert:
     that:
       - "postgresql_config.ssl is defined and postgresql_config.ssl == 'on'"
-  when: item.1.connection is defined and item.1.connection == 'hostssl'
+  when: item.1.type is defined and item.1.type == 'hostssl'
   with_subelements_safe:
     - postgresql_users
-    - databases
+    - connections
 
 - name: validation | ssl settings
   assert:
