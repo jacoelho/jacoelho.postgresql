@@ -1,7 +1,7 @@
 ---
 
 - include: validation.yml
-  tags: postgresl_validation
+  tags: always
 
 - include: apt.yml
   when: ansible_os_family == 'Debian'
@@ -20,11 +20,11 @@
   tags: postgresl_configuration
 
 - include: setup_users.yml
-#  when: (not postgresql_replication) or postgresql_replication_role == 'master'
+  when: postgresql_replication_role == 'master' or not postgresql_replication
   tags: postgresl_users
 
 - include: setup_databases.yml
-  when: (not postgresql_replication) or postgresql_replication_role == 'master'
+  when: postgresql_replication_role == 'master' or not postgresql_replication
   tags: postgresl_databases
 
 #- include: setup_privileges.yml
