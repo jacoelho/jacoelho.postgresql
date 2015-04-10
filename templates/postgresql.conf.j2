@@ -649,3 +649,9 @@ xmlbinary = '{{ postgresql_cfg_xmlbinary }}'
 xmloption = '{{ postgresql_cfg_xmloption }}'
 {% endif %}
 
+#------------------------------------------------------------------------------
+# CUSTOMIZED OPTIONS
+#------------------------------------------------------------------------------
+{% if postgresql_whitelist_extensions is defined %}
+extwlist.extensions = '{% for ext in postgresql_whitelist_extensions %}{{ ext }}{% if not loop.last %},{% endif %}{% endfor %}'
+{% endif %}

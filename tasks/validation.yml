@@ -96,3 +96,7 @@
       - "postgresql_ssl.key_filepath is defined"
   when: postgresql_config.ssl is defined and postgresql_cfg_ssl == 'on'
 
+- name: validation | whitelisting
+  assert:
+    that: '"pg_extwlist" in postgresql_extensions'
+  when: 'postgresql_whitelist_extensions | length > 0'
