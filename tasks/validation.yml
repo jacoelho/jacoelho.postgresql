@@ -4,11 +4,6 @@
   assert:
     that: "postgresql_version in [9.1,9.2,9.3,9.4]"
 
-- name: validation | check parameters
-  assert:
-    that: "item.key in postgresql_parameters['{{ postgresql_version }}']"
-  with_dict: postgresql_config
-
 - name: validation | repository configs
   assert:
     that: "postgresql_repository in ['official','distro']"
@@ -20,24 +15,24 @@
 - name: validation | replication requirements
   assert:
     that:
-      - "postgresql_config.listen_addresses is defined"
-      - "postgresql_config.wal_level is defined"
-      - "postgresql_config.wal_buffers is defined"
-      - "postgresql_config.wal_keep_segments is defined"
-      - "postgresql_config.max_wal_senders is defined"
-      - "postgresql_config.checkpoint_segments is defined"
+      - "postgresql_cfg_listen_addresses is defined"
+      - "postgresql_cfg_wal_level is defined"
+      - "postgresql_cfg_wal_buffers is defined"
+      - "postgresql_cfg_wal_keep_segments is defined"
+      - "postgresql_cfg_max_wal_senders is defined"
+      - "postgresql_cfg_checkpoint_segments is defined"
   when: postgresql_replication
 
 - name: validation | replication master configuration
   assert:
     that:
-      - "postgresql_config.wal_level == 'hot_standby'"
+      - "postgresql_cfg_wal_level == 'hot_standby'"
   when: postgresql_replication and postgresql_replication_role == 'master'
 
 - name: validation | replication slave configuration
   assert:
     that:
-      - "postgresql_config.hot_standby == 'on'"
+      - "postgresql_cfg_hot_standby == 'on'"
   when: postgresql_replication and postgresql_replication_role == 'slave'
 
 - name: validation | user basic configuration
@@ -45,6 +40,15 @@
     that:
       - "item.user is defined"
   with_items: ( postgresql_users + postgresql_users_replication )
+
+- name: validation | user databases
+  assert:
+    that:
+    - "'{{ item.1.database }}' in (postgresql_databases | map(attribute='database') | list)"
+  when: item.1.database is defined and item.1.database != 'all'
+  with_subelements_safe:
+    - postgresql_users
+    - databases
 
 - name: validation | user connection databases
   assert:
@@ -76,7 +80,7 @@
 - name: validation | user connection hostssl and server with ssl enabled
   assert:
     that:
-      - "postgresql_config.ssl is defined and postgresql_config.ssl == 'on'"
+      - "postgresql_cfg_ssl is defined and postgresql_cfg_ssl == 'on'"
   when: item.1.type is defined and item.1.type == 'hostssl'
   with_subelements_safe:
     - postgresql_users
@@ -90,5 +94,5 @@
       - "postgresql_ssl.cert_filepath is defined"
       - "postgresql_ssl.key is defined"
       - "postgresql_ssl.key_filepath is defined"
-  when: postgresql_config.ssl is defined and postgresql_config.ssl == 'on'
+  when: postgresql_config.ssl is defined and postgresql_cfg_ssl == 'on'
 

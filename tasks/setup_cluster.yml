@@ -29,7 +29,7 @@
     and
     "postgresql_cluster_name in clusters.stdout"
     and
-    "postgresql_config.data_directory in clusters.stdout"
+    "postgresql_cfg_data_directory in clusters.stdout"
     and
     "postgresql_encoding in server_encoding.stdout"
     and
@@ -39,7 +39,7 @@
 - name: check permissions data_directory
   sudo: yes
   file:
-    path: "{{ postgresql_config.data_directory }}"
+    path: "{{ postgresql_cfg_data_directory }}"
     state: directory
     mode: 0700
     owner: postgres

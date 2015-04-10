@@ -25,7 +25,7 @@
 - name: configure pg_hba.conf
   sudo: yes
   template:
-    dest: "{{ postgresql_config.hba_file }}"
+    dest: "{{ postgresql_cfg_hba_file }}"
     src: pg_hba.conf.j2
     mode: 0644
     owner: postgres
