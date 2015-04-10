@@ -1,0 +1,10 @@
+# PostgreSQL User Name Maps
+# =========================
+#
+# MAPNAME       SYSTEM-USERNAME         PG-USERNAME
+
+{% for user in (postgresql_users_default + postgresql_users + postgresql_users_replication) %}
+{% for map in user.maps | default([]) %}
+{{ map.name }} {{ map.filter }} {{ user.user }}
+{% endfor %}
+{% endfor %}

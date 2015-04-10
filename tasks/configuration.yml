@@ -34,3 +34,12 @@
   notify: reload postgresql
   tags: postgresl_users
 
+- name: configure pg_ident.conf
+  sudo: yes
+  template:
+    dest: "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_ident.conf"
+    src: pg_ident.conf.j2
+    mode: 0644
+    owner: postgres
+    group: postgres
+  notify: reload postgresql
