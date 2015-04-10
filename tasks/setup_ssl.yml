@@ -8,13 +8,13 @@
     state: directory
     mode: 0700
   with_items:
-    - postgresql_ssl.cert_filepath | dirname
-    - postgresql_ssl.key_filepath  | dirname
+    - postgresql_cfg_ssl_cert_file | dirname
+    - postgresql_cfg_ssl_key_file | dirname
 
 - name: Copying ssl keys
   copy:
     content: "{{ postgresql_ssl.key }}"
-    dest: "{{ postgresql_ssl.key_filepath"
+    dest: "{{ postgresql_cfg_ssl_key_file }}"
     owner: postgres
     group: postgres
     mode: 0600
@@ -22,7 +22,7 @@
 - name: Copying ssl certs
   copy:
     content: "{{ postgresql_ssl.cert }}"
-    dest: "{{ postgresql_ssl.cert_filepath }}"
+    dest: "{{ postgresql_cfg_ssl_cert_file }}"
     owner: postgres
     group: postgres
     mode: 0644

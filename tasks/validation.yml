@@ -90,10 +90,10 @@
   assert:
     that:
       - "postgresql_ssl is defined"
-      - "postgresql_ssl.cert is defined"
-      - "postgresql_ssl.cert_filepath is defined"
       - "postgresql_ssl.key is defined"
-      - "postgresql_ssl.key_filepath is defined"
+      - "postgresql_ssl.cert is defined"
+      - "postgresql_cfg_ssl_key_file is defined"
+      - "postgresql_cfg_ssl_cert_file is defined"
   when: postgresql_config.ssl is defined and postgresql_cfg_ssl == 'on'
 
 - name: validation | whitelisting
