@@ -7,6 +7,10 @@
   when: ansible_os_family == 'Debian'
   tags: postgresl_packages
 
+- include: yum.yml
+  when: ansible_os_family == 'RedHat'
+  tags: postgresl_packages
+
 - include: setup_cluster.yml
   tags: postgresl_cluster
 

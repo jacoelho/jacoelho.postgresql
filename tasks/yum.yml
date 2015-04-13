@@ -1,0 +1,36 @@
+---
+
+- set_fact:
+    postgresql_version: "{{ postgresql_version|replace('.', '') }}"
+
+- name: install prerequisites
+  sudo: yes
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - python-pycurl
+    - python-psycopg2
+
+- name: install postgresql package
+  sudo: yes
+  yum:
+    name: "postgresql{{ postgresql_version }}-server"
+    state: installed
+  environment:
+    RUNLEVEL: 1
+
+- name: install libpq-dev package
+  sudo: yes
+  apt:
+    pkg: "libpq-dev"
+    state: installed
+  when: postgresql_dev
+
+- name: install contrib package
+  sudo: yes
+  yum:
+    name: "postgresql{{ postgresql_version }}-contrib"
+    state: installed
+  when: postgresql_contrib
+
