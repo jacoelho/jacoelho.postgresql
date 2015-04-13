@@ -16,7 +16,7 @@
     state: directory
     owner: "{{ postgresql_superuser }}"
     group: "{{ postgresql_superuser }}"
-    mode: 0700
+    mode: 0755
   when: not item.stat.exists
   with_items: ssl_directories.results
 
@@ -46,4 +46,5 @@
     owner: "{{ postgresql_superuser }}"
     group: "{{ postgresql_superuser }}"
     mode: 0644
+    force: yes
 

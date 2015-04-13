@@ -42,3 +42,6 @@
     owner: "{{ postgresql_superuser }}"
     group: "{{ postgresql_superuser }}"
   notify: reload postgresql
+
+- meta: flush_handlers
+
