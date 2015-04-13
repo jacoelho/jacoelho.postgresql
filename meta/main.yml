@@ -1,1 +1,21 @@
 ---
+
+galaxy_info:
+  author: "Jose Coelho"
+  description: Postgreql
+  company: Linkedcare
+  license: MIT
+  min_ansible_version: 1.4
+
+  platforms:
+    - name: Debian
+      versions:
+        - wheezy
+    - name: Ubuntu
+      versions:
+        - trusty
+  categories:
+    - database
+    - database:sql
+
+dependencies: []
