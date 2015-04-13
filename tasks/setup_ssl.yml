@@ -1,28 +1,49 @@
 ---
 
-- name: create ssl directories if needed
-  file:
+- name: check directories
+  stat:
     path: "{{ item }}"
-    owner: postgres
-    group: postgres
-    state: directory
-    mode: 0700
   with_items:
-    - postgresql_cfg_ssl_cert_file | dirname
-    - postgresql_cfg_ssl_key_file | dirname
+    - "{{ postgresql_cfg_ssl_cert_file | dirname }}"
+    - "{{ postgresql_cfg_ssl_key_file | dirname }}"
+    - "{{ postgresql_cfg_ssl_ca_file | dirname }}"
+  register: ssl_directories
+
+- name: create ssl directories if needed
+  sudo: yes
+  file:
+    path: "{{ item.item }}"
+    state: directory
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+    mode: 0700
+  when: not item.stat.exists
+  with_items: ssl_directories.results
 
 - name: Copying ssl keys
+  sudo: yes
   copy:
     content: "{{ postgresql_ssl.key }}"
     dest: "{{ postgresql_cfg_ssl_key_file }}"
-    owner: postgres
-    group: postgres
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
     mode: 0600
 
 - name: Copying ssl certs
+  sudo: yes
   copy:
     content: "{{ postgresql_ssl.cert }}"
     dest: "{{ postgresql_cfg_ssl_cert_file }}"
-    owner: postgres
-    group: postgres
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
     mode: 0644
+
+- name: Copying ca ssl certs
+  sudo: yes
+  copy:
+    content: "{{ postgresql_ssl.ca }}"
+    dest: "{{ postgresql_cfg_ssl_ca_file }}"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+    mode: 0644
+

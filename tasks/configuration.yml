@@ -6,8 +6,8 @@
     path: "{{ item }}"
     state: directory
     mode: 0755
-    owner: postgres
-    group: postgres
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
   with_items:
     - "/etc/postgresql/{{ postgresql_version }}"
     - "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}"
@@ -18,8 +18,8 @@
     dest: "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/postgresql.conf"
     src: postgresql.conf.j2
     mode: 0644
-    owner: postgres
-    group: postgres
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
   notify: restart postgresql
 
 - name: configure pg_hba.conf
@@ -28,9 +28,8 @@
     dest: "{{ postgresql_cfg_hba_file }}"
     src: pg_hba.conf.j2
     mode: 0644
-    owner: postgres
-    group: postgres
-#    validate: /bin/sh -c "grep -q validationfailed %s && exit 1"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
   notify: reload postgresql
   tags: postgresl_users
 
@@ -40,6 +39,6 @@
     dest: "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_ident.conf"
     src: pg_ident.conf.j2
     mode: 0644
-    owner: postgres
-    group: postgres
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
   notify: reload postgresql

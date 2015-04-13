@@ -11,7 +11,7 @@
   tags: postgresl_cluster
 
 - include: setup_ssl.yml
-  when: postgresl_cfg_ssl is defined and postgresql_config == 'on'
+  when: postgresql_cfg_ssl is defined and postgresql_cfg_ssl == 'on'
 
 - include: replication.yml
   when: postgresql_replication

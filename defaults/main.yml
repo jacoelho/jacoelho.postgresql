@@ -2,13 +2,12 @@
 
 postgresql_version: 9.4
 postgresql_repository: official
+postgresql_superuser: postgres
 
 postgresql_cluster_name: main
+postgresql_cluster_drop: false
 postgresql_dev: false
 postgresql_contrib: false
-
-postgresql_replication: false
-postgresql_replication_role: master
 
 postgresql_encoding: UTF-8
 postgresql_locale: en_US.UTF-8
@@ -19,6 +18,9 @@ postgresql_whitelist_extensions: [ ]
 
 postgresql_ssl: [ ]
 
+postgresql_replication: false
+postgresql_replication_role: master
+#postgresql_replication_master_ip: 10.0.0.1
 postgresql_users_replication: [ ]
 
 postgresql_users_default:

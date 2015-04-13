@@ -1,7 +1,7 @@
 ---
 
 - name: create databases
-  sudo_user: postgres
+  sudo_user: "{{ postgresql_superuser }}"
   postgresql_db:
     name: "{{ item.database }}"
     owner:  "{{ item.owner | default(None) }}"

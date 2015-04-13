@@ -2,7 +2,7 @@
 
 - name: create postgresql users
   sudo: yes
-  sudo_user: postgres
+  sudo_user: "{{ postgresql_superuser }}"
   postgresql_user:
     name: "{{ item.0.user }}"
     password: "{{ item.0.password | default(None)}}"
@@ -10,14 +10,14 @@
     role_attr_flags: "{{ (item.0.roles | default('')) | join(',') | upper }}"
     state: "{{ item.0.state | default('present') }}"
     fail_on_user: no
-  when: item.0.user != 'postgres'
+  when: item.0.user != postgresql_superuser
   with_subelements_safe:
     - postgresql_users
     - databases
 
 - name: create postgresql users priv
   sudo: yes
-  sudo_user: postgres
+  sudo_user: "{{ postgresql_superuser }}"
   postgresql_user:
     name: "{{ item.0.user }}"
     db: "{{ item.1.database }}"
@@ -34,7 +34,7 @@
 
 - name: create replication postgresql users
   sudo: yes
-  sudo_user: postgres
+  sudo_user: "{{ postgresql_superuser }}"
   postgresql_user:
     name: "{{ item.user }}"
     password: "{{ item.password }}"
