@@ -1,7 +1,7 @@
 ---
 
 - name: install prerequisites
-  sudo: true
+  sudo: yes
   apt:
     pkg: "{{ item }}"
     state: installed
@@ -12,7 +12,7 @@
     - python-psycopg2
 
 - name: install official repo gpg key
-  sudo: true
+  sudo: yes
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: ACCC4CF8
@@ -20,7 +20,7 @@
   when: postgresql_repository == "official"
 
 - name: install official repository
-  sudo: true
+  sudo: yes
   apt_repository:
     repo: "deb https://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb.codename }}-pgdg main"
     state: present
@@ -28,15 +28,17 @@
   when: postgresql_repository == "official"
 
 - name: install postgresql package
-  sudo: true
+  sudo: yes
   apt:
     pkg: "postgresql-{{ postgresql_version }}"
     state: installed
     update_cache: yes
     cache_valid_time: 3600
+  environment:
+    RUNLEVEL: 1
 
 - name: install libpq-dev package
-  sudo: true
+  sudo: yes
   apt:
     pkg: "libpq-dev"
     state: installed
@@ -45,7 +47,7 @@
   when: postgresql_dev
 
 - name: install contrib package
-  sudo: true
+  sudo: yes
   apt:
     pkg: "postgresql-contrib-{{ postgresql_version }}"
     state: installed
