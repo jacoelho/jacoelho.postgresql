@@ -1,4 +1,4 @@
 standby_mode = 'on'
-primary_conninfo = 'host={{ master_ip }} port=5432 user={{ postgresql_users_replication.0.user }} password={{ postgresql_users_replication.0.password }}'
+primary_conninfo = 'host={{ postgresql_replication_master_ip }} port=5432 user={{ postgresql_users_replication.0.user }} password={{ postgresql_users_replication.0.password }}'
 trigger_file = '/tmp/postgresql.trigger'
 
