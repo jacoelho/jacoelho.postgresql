@@ -12,7 +12,7 @@ Ansible role to manage postgresql servers, supports:
 ### How to use
 
 #### Replication (master):
-
+```yaml
 postgresql_replication: true
 postgresql_replication_role: master
 
@@ -24,14 +24,17 @@ postgresql_users_replication:
         type: host
         address: <slave ip>/32
         auth: md5
+```
 
 #### Replication (slave):
-
+```yaml
 postgresql_replication: true
 postgresql_replication_role: slave
 postgresql_replication_master_ip: <master server ip>
+```
 
 ### SSL:
+```yaml
 postgresql_cfg_ssl: "on"
 postgresql_cfg_ssl_key_file: /path/to/file
 postgresql_cfg_ssl_cert_file: /path/to/file
@@ -43,8 +46,10 @@ postgresql_ssl:
     contents
   ca: |
     contents
+```
 
 ### Users:
+```yaml
 postgresql_users:
   - user: username
     roles:
@@ -62,14 +67,16 @@ postgresql_users:
       - database: database02
         type: local
         auth: trust
+```
 
 ### Databases:
+```yaml
 postgresql_databases:
-      - database: database01
-        owner: "postgres"
-      - database: database02
-        owner: "postgres"
-
+    - database: database01
+      owner: "postgres"
+    - database: database02
+      owner: "postgres"
+```
 
 
 ### TODO
