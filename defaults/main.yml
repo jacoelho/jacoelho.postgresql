@@ -24,12 +24,7 @@ postgresql_replication_role: master
 postgresql_users_replication: [ ]
 
 postgresql_users_default:
-  - user: postgres
-    connections:
-      - database: all
-        type: local
-        auth: trust
-  - user: all
+  - user: "{{ postgresql_superuser }}"
     connections:
       - database: all
         type: local
