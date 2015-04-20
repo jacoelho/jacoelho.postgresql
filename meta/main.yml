@@ -2,7 +2,7 @@
 
 galaxy_info:
   author: "Jose Coelho"
-  description: Postgreql
+  description: Postgresql
   company: Linkedcare
   license: MIT
   min_ansible_version: 1.4
