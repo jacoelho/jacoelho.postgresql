@@ -11,6 +11,9 @@ Ansible role to manage postgresql servers, supports:
 
 ### How to use
 
+Install lookup plugin:
+```tests/lookup_plugins```
+
 #### Replication (master):
 ```yaml
 postgresql_replication: true
