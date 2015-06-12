@@ -15,14 +15,14 @@
     - postgresql_users
     - databases
 
-- name: create postgresql users priv
+- name: create postgresql users priv | ALL
   sudo: yes
   sudo_user: "{{ postgresql_superuser }}"
   postgresql_user:
-    name: "{{ item.0.user }}"
-    db: "{{ item.1.database }}"
+    name:  "{{ item.0.user }}"
+    db:    "{{ item.1.database }}"
     state: "{{ item.0.state | default('present') }}"
-    priv: "{{ item.1.priv | default(None) }}"
+    priv:  "ALL"
     fail_on_user: no
   with_subelements_safe:
     - postgresql_users
@@ -30,7 +30,25 @@
   when: >
     item.1.database is defined and item.1.database != 'all'
     and
-    item.1.priv is defined
+    item.1.priv is defined and item.1.priv == 'ALL'
+
+- name: create postgresql users priv | Custom
+  sudo: yes
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_privs:
+    role:  "{{ item.0.user }}"
+    db:    "{{ item.1.database }}"
+    privs: "{{ item.1.priv | default(None) }}"
+    objs:  "{{ item.1.priv_objs | default('ALL_IN_SCHEMA') }}"
+    type:  "{{ item.1.priv_type | default(omit) }}"
+    state: "{{ item.0.state | default('present') }}"
+  with_subelements_safe:
+    - postgresql_users
+    - databases
+  when: >
+    item.1.database is defined and item.1.database != 'all'
+    and
+    item.1.priv is defined and item.1.priv != 'ALL'
 
 - name: create replication postgresql users
   sudo: yes

@@ -65,7 +65,9 @@ postgresql_users:
       - database: database01
         priv: ALL
       - database: database02
-        priv: ALL
+        priv: SELECT
+        priv_objs: ALL_IN_SCHEMA
+        priv_type: table
     connections:
       - database: all
         type: hostssl
