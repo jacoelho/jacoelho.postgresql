@@ -53,7 +53,7 @@
 - name: validation | user connection databases
   assert:
     that:
-    - "'{{ item.1.database }}' in (postgresql_databases | map(attribute='database') | list)"
+    - "{{ (item.1.database.split(',')) | difference((postgresql_databases | map(attribute='database') | list)) }}"
   when: item.1.type is defined and item.1.database != 'all'
   with_subelements_safe:
     - postgresql_users
