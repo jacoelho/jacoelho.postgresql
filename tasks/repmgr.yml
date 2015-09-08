@@ -1,0 +1,19 @@
+---
+
+- name: repmgr | create repmgr.conf
+  sudo: yes
+  template:
+    src: repmgr.conf.j2
+    dest: "{{ postgresql_repmgr_conf }}"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+
+- name: repmgr | setup master
+  sudo: yes
+  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose master register"
+  when: postgresql_repmgr_type == 'master'
+
+- name: repmgr | setup standby
+  sudo: yes
+  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose standby register"
+  when: postgresql_repmgr_type == 'standby'

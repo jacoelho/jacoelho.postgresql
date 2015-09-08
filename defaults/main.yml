@@ -1,5 +1,17 @@
 ---
 
+postgresql_repmgr: false
+postgresql_repmgr_user: repmgr
+postgresql_repmgr_password: repmgr
+postgresql_repmgr_database: repmgr
+
+postgresql_repmgr_conf: /etc/repmgr/repmgr.conf
+postgresql_repmgr_type: master
+postgresql_repmgr_cluster_name: cluster
+postgresql_repmgr_node: 1
+postgresql_repmgr_node_name: node01
+postgresql_repmgr_conninfo: "host={{ ansible_default_ipv4.address }} user={{ postgresql_repmgr_user  }} dbname={{ postgresql_repmgr_database }}"
+
 postgresql_version: 9.4
 postgresql_repository: official
 postgresql_superuser: postgres
@@ -8,6 +20,7 @@ postgresql_cluster_name: main
 postgresql_cluster_drop: false
 postgresql_dev: false
 postgresql_contrib: false
+
 
 postgresql_encoding: UTF-8
 postgresql_locale: en_US.UTF-8

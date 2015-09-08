@@ -61,3 +61,14 @@
     fail_on_user: no
   with_items: postgresql_users_replication
   when: postgresql_replication and postgresql_users_replication is defined
+
+- name: create repmgr user
+  sudo: yes
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_user:
+    name: "{{ postgresql_repmgr_user }}"
+    password: "{{postgresql_repmgr_password }}"
+    role_attr_flags: LOGIN,SUPERUSER
+    state: "present"
+    fail_on_user: no
+  when: postgresql_repmgr

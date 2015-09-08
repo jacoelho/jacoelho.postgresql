@@ -34,3 +34,9 @@
     state: installed
   when: postgresql_contrib
 
+- name: install repmgr package
+  sudo: yes
+  yum:
+    name: "repmgr"
+    state: installed
+  when: postgresql_repmgr
