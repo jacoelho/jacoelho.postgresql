@@ -1,5 +1,27 @@
 ---
 
+- name: create repmgr user
+  sudo: yes
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_user:
+    name: "{{ postgresql_repmgr_user }}"
+    password: "{{postgresql_repmgr_password }}"
+    role_attr_flags: LOGIN,SUPERUSER,REPLICATION
+    state: "present"
+    fail_on_user: no
+
+- name: create repmgr database
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_db:
+    name: "{{ postgresql_repmgr_database }}"
+    owner:  "{{ postgresql_repmgr_user }}"
+
+- name: repmgr | create config directory
+  sudo: yes
+  file:
+    path: "{{ postgresql_repmgr_conf | dirname }}"
+    state: directory
+
 - name: repmgr | create repmgr.conf
   sudo: yes
   template:
@@ -8,12 +30,14 @@
     owner: "{{ postgresql_superuser }}"
     group: "{{ postgresql_superuser }}"
 
-- name: repmgr | setup master
+- name: repmgr | check cluster status
   sudo: yes
-  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose master register"
-  when: postgresql_repmgr_type == 'master'
+  command: "repmgr -f {{ postgresql_repmgr_conf  }} cluster show"
+  ignore_errors: true
+  register: repmgr_status
 
-- name: repmgr | setup standby
+- name: repmgr | setup cluster
   sudo: yes
-  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose standby register"
-  when: postgresql_repmgr_type == 'standby'
+  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose {{ postgresql_repmgr_type }} register"
+  when: repmgr_status|failed
+
