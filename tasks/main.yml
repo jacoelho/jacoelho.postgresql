@@ -26,11 +26,11 @@
   when: postgresql_repmgr_type != 'standby'
 
 - include: setup_databases.yml
-  when: postgresql_replication_role == 'master' or not postgresql_replication or postgresql_repmgr_type != 'standby'
+  when: (postgresql_replication_role == 'master' or not postgresql_replication) and postgresql_repmgr_type != 'standby'
   tags: postgresl_databases
 
 - include: setup_users.yml
-  when: postgresql_replication_role == 'master' or not postgresql_replication or postgresql_repmgr_type != 'standby'
+  when: (postgresql_replication_role == 'master' or not postgresql_replication) and postgresql_repmgr_type != 'standby'
   tags: postgresl_users
 
 - include: repmgr.yml
