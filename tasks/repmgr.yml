@@ -86,3 +86,20 @@
   command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose --force {{ postgresql_repmgr_type }} register"
   when: repmgr_status|failed
 
+- name: repmgr | check cluster status
+  sudo_user: "{{ postgresql_superuser }}"
+  command: "repmgr -f {{ postgresql_repmgr_conf }} cluster show"
+  changed_when: false
+  register: new_repmgr_status
+
+- name: repmgr | create repmgrd upstart init
+  sudo: yes
+  template:
+    src: repmgrd.conf.j2
+    dest: "/etc/init/repmgrd.conf"
+
+- name: repmgr | start repmgr daemon
+  service:
+    name: repmgrd
+    state: started
+
