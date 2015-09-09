@@ -99,6 +99,7 @@
     dest: "/etc/init/repmgrd.conf"
 
 - name: repmgr | start repmgr daemon
+  sudo: yes
   service:
     name: repmgrd
     state: started
