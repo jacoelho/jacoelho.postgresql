@@ -18,6 +18,7 @@ postgresql_repmgr_conninfo: "host={{ ansible_default_ipv4.address }} user={{ pos
 postgresql_version: 9.4
 postgresql_repository: official
 postgresql_superuser: postgres
+postgresql_superuser_password: postgres
 
 postgresql_cluster_name: main
 postgresql_cluster_drop: false
