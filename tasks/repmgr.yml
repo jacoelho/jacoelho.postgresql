@@ -1,33 +1,33 @@
 ---
 
-- name: create .ssh directory
-  sudo: yes
-  sudo_user: "{{ postgresql_superuser }}"
-  file:
-    path: "~/.ssh"
-    owner: "{{ postgresql_superuser }}"
-    group: "{{ postgresql_superuser }}"
-    state: directory
-
-- name: copy ssh key
-  sudo: yes
-  sudo_user: "{{ postgresql_superuser }}"
-  copy:
-    dest: "~/.ssh/id_rsa"
-    content: "{{ postgresql_repmgr_private_key }}"
-    mode: 0600
-    owner: "{{ postgresql_superuser }}"
-    group: "{{ postgresql_superuser }}"
-
-- name: copy authorized_keys
-  sudo: yes
-  sudo_user: "{{ postgresql_superuser }}"
-  copy:
-    dest: "~/.ssh/authorized_keys"
-    content: "{{ postgresql_repmgr_public_key }}"
-    mode: 0600
-    owner: "{{ postgresql_superuser }}"
-    group: "{{ postgresql_superuser }}"
+#- name: create .ssh directory
+#  sudo: yes
+#  sudo_user: "{{ postgresql_superuser }}"
+#  file:
+#    path: "~/.ssh"
+#    owner: "{{ postgresql_superuser }}"
+#    group: "{{ postgresql_superuser }}"
+#    state: directory
+#
+#- name: copy ssh key
+#  sudo: yes
+#  sudo_user: "{{ postgresql_superuser }}"
+#  copy:
+#    dest: "~/.ssh/id_rsa"
+#    content: "{{ postgresql_repmgr_private_key }}"
+#    mode: 0600
+#    owner: "{{ postgresql_superuser }}"
+#    group: "{{ postgresql_superuser }}"
+#
+#- name: copy authorized_keys
+#  sudo: yes
+#  sudo_user: "{{ postgresql_superuser }}"
+#  copy:
+#    dest: "~/.ssh/authorized_keys"
+#    content: "{{ postgresql_repmgr_public_key }}"
+#    mode: 0600
+#    owner: "{{ postgresql_superuser }}"
+#    group: "{{ postgresql_superuser }}"
 
 - name: create repmgr user
   sudo: yes
@@ -99,11 +99,17 @@
 
 - name: sync from master
   sudo_user: "{{ postgresql_superuser }}"
-  command: "repmgr -f {{ postgresql_repmgr_conf }}  --verbose -D {{ postgresql_cfg_data_directory  }} -d {{ postgresql_repmgr_database }} -U {{ postgresql_repmgr_user }} standby clone {{ postgresql_repmgr_master_ip }}"
+  command: "repmgr -f {{ postgresql_repmgr_conf }}  --verbose --ignore-external-config-files -D {{ postgresql_cfg_data_directory  }} -d {{ postgresql_repmgr_database }} -U {{ postgresql_repmgr_user }} standby clone {{ postgresql_repmgr_master_ip }}"
   when: postgresql_repmgr_type == 'standby' and repmgr_status|failed
+
+- name: start postgresql server
+  sudo: yes
+  service:
+    name: postgresql
+    state: started
 
 - name: repmgr | setup cluster
   sudo_user: "{{ postgresql_superuser }}"
-  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose {{ postgresql_repmgr_type }} register"
+  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose --force {{ postgresql_repmgr_type }} register"
   when: repmgr_status|failed
 

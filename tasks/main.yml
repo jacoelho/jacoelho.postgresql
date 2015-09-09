@@ -13,7 +13,7 @@
 
 - include: setup_cluster.yml
   tags: postgresl_cluster
-  when: postgresql_repmgr_type != 'standby'
+  when: postgresql_replication
 
 - include: setup_ssl.yml
   when: postgresql_cfg_ssl is defined and postgresql_cfg_ssl == 'on'
@@ -23,7 +23,6 @@
 
 - include: configuration.yml
   tags: postgresl_configuration
-  when: postgresql_repmgr_type != 'standby'
 
 - include: setup_databases.yml
   when: (postgresql_replication_role == 'master' or not postgresql_replication) and postgresql_repmgr_type != 'standby'
