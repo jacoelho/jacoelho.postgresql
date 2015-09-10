@@ -103,3 +103,25 @@
     that: '"pg_extwlist" in postgresql_extensions'
   when: 'postgresql_whitelist_extensions | length > 0'
 
+- name: validation | repmgr configs
+  assert:
+    that: "postgresql_repmgr_type in ['master','standby', 'witness']"
+  when: postgresql_repmgr
+
+- name: validation | repmgr cluster configuration
+  assert:
+    that:
+      - "postgresql_repmgr_cluster_name is defined"
+      - "postgresql_repmgr_node is defined"
+      - "postgresql_repmgr_node_name is defined"
+  when: postgresql_repmgr
+
+- name: validation | repository configurations
+  assert:
+    that:
+      - "postgresql_cfg_listen_addresses is defined"
+      - "postgresql_cfg_wal_level is defined and postgresql_cfg_wal_level == 'hot_standby'"
+      - "postgresql_cfg_hot_standby is defined and postgresql_cfg_hot_standby == 'on'"
+      - "postgresql_cfg_archive_mode is defined and postgresql_cfg_archive_mode == 'on'"
+      - "postgresql_cfg_archive_command is defined"
+  when: postgresql_repmgr

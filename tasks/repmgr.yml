@@ -98,9 +98,25 @@
     src: repmgrd.conf.j2
     dest: "/etc/init/repmgrd.conf"
 
-- name: repmgr | start repmgr daemon
+
+- name: repmgr | enable repmgr daemon
   sudo: yes
   service:
     name: repmgrd
-    state: started
+    enabled: yes
 
+- name: repmgr | check repmgr daemon
+  sudo: yes
+  command: /usr/sbin/service repmgrd status
+  changed_when: false
+  register: _status
+
+- name: repmgr | restart repmgr daemon
+  sudo: yes
+  command: /usr/sbin/service repmgrd restart
+  when: _status and _status.stdout.find('start/running') != -1
+
+- name: repmgr | start repmgr daemon
+  sudo: yes
+  command: /usr/sbin/service repmgrd start
+  when: _status and _status.stdout.find('stop/waiting') != -1
