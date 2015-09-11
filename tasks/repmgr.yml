@@ -1,0 +1,122 @@
+---
+
+- name: repmgr | create repmgr user
+  sudo: yes
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_user:
+    name: "{{ postgresql_repmgr_user }}"
+    password: "{{postgresql_repmgr_password }}"
+    role_attr_flags: LOGIN,SUPERUSER,REPLICATION
+    state: "present"
+    fail_on_user: no
+  when: postgresql_repmgr_type == 'master'
+
+- name: repmgr | create repmgr database
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_db:
+    name: "{{ postgresql_repmgr_database }}"
+    owner:  "{{ postgresql_repmgr_user }}"
+  when: postgresql_repmgr_type == 'master'
+
+- name: repmgr | create pgpass
+  sudo_user: "{{ postgresql_superuser }}"
+  template:
+    src: pgpass.j2
+    dest: ~/.pgpass
+    mode: 0600
+
+- name: repmgr | create config directory
+  sudo: yes
+  file:
+    path: "{{ postgresql_repmgr_conf | dirname }}"
+    state: directory
+
+- name: repmgr | create repmgr.conf
+  sudo: yes
+  template:
+    src: repmgr.conf.j2
+    dest: "{{ postgresql_repmgr_conf }}"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+
+- name: repmgr | check cluster status
+  sudo_user: "{{ postgresql_superuser }}"
+  command: "repmgr -f {{ postgresql_repmgr_conf  }} cluster show"
+  changed_when: false
+  ignore_errors: true
+  register: repmgr_status
+
+- name: repmgr | stop postgresql server
+  sudo: yes
+  service:
+    name: postgresql
+    state: stopped
+  when: postgresql_repmgr_type == 'standby' and repmgr_status|failed
+
+- name: repmgr | remove data_directory
+  sudo: yes
+  file:
+    path: "{{ postgresql_cfg_data_directory }}"
+    state: absent
+  when: postgresql_repmgr_type == 'standby' and repmgr_status|failed
+
+- name: repmgr | create data_directory
+  sudo: yes
+  file:
+    path: "{{ postgresql_cfg_data_directory }}"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+    state: directory
+  when: postgresql_repmgr_type == 'standby' and repmgr_status|failed
+
+
+- name: repmgr | sync from master
+  sudo_user: "{{ postgresql_superuser }}"
+  command: "repmgr -f {{ postgresql_repmgr_conf }}  --verbose --ignore-external-config-files -D {{ postgresql_cfg_data_directory  }} -d {{ postgresql_repmgr_database }} -U {{ postgresql_repmgr_user }} standby clone {{ postgresql_repmgr_master_ip }}"
+  when: postgresql_repmgr_type == 'standby' and repmgr_status|failed
+
+- name: repmgr | start postgresql server
+  sudo: yes
+  service:
+    name: postgresql
+    state: started
+
+- name: repmgr | setup cluster
+  sudo_user: "{{ postgresql_superuser }}"
+  command: "repmgr -f {{ postgresql_repmgr_conf }} --verbose --force {{ postgresql_repmgr_type }} register"
+  when: repmgr_status|failed
+
+- name: repmgr | check cluster status
+  sudo_user: "{{ postgresql_superuser }}"
+  command: "repmgr -f {{ postgresql_repmgr_conf }} cluster show"
+  changed_when: false
+  register: new_repmgr_status
+
+- name: repmgr | create repmgrd upstart init
+  sudo: yes
+  template:
+    src: repmgrd.conf.j2
+    dest: "/etc/init/repmgrd.conf"
+
+
+- name: repmgr | enable repmgr daemon
+  sudo: yes
+  service:
+    name: repmgrd
+    enabled: yes
+
+- name: repmgr | check repmgr daemon
+  sudo: yes
+  command: /usr/sbin/service repmgrd status
+  changed_when: false
+  register: _status
+
+- name: repmgr | restart repmgr daemon
+  sudo: yes
+  command: /usr/sbin/service repmgrd restart
+  when: _status and _status.stdout.find('start/running') != -1
+
+- name: repmgr | start repmgr daemon
+  sudo: yes
+  command: /usr/sbin/service repmgrd start
+  when: _status and _status.stdout.find('stop/waiting') != -1

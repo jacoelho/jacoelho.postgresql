@@ -13,6 +13,7 @@
 
 - include: setup_cluster.yml
   tags: postgresl_cluster
+  when: postgresql_replication
 
 - include: setup_ssl.yml
   when: postgresql_cfg_ssl is defined and postgresql_cfg_ssl == 'on'
@@ -24,11 +25,15 @@
   tags: postgresl_configuration
 
 - include: setup_databases.yml
-  when: postgresql_replication_role == 'master' or not postgresql_replication
+  when: (postgresql_replication_role == 'master' or not postgresql_replication) and postgresql_repmgr_type != 'standby'
   tags: postgresl_databases
 
 - include: setup_users.yml
-  when: postgresql_replication_role == 'master' or not postgresql_replication
+  when: (postgresql_replication_role == 'master' or not postgresql_replication) and postgresql_repmgr_type != 'standby'
   tags: postgresl_users
+
+- include: repmgr.yml
+  when: postgresql_repmgr
+  tags: postgresl_repmgr
 
 #- include: setup_privileges.yml

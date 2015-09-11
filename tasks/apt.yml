@@ -55,6 +55,15 @@
     cache_valid_time: 3600
   when: postgresql_contrib
 
+- name: install repmgr package
+  sudo: yes
+  apt:
+    pkg: "repmgr"
+    state: installed
+    update_cache: yes
+    cache_valid_time: 3600
+  when: postgresql_repmgr
+
 - name: install postgresql extension whitelisting
   sudo: yes
   apt:
