@@ -1,5 +1,7 @@
 ---
 
+#postgresql_http_proxy:
+
 postgresql_repmgr: false
 postgresql_repmgr_user: repmgr
 postgresql_repmgr_password: repmgr

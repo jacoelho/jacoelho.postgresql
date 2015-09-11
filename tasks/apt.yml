@@ -7,6 +7,9 @@
     state: installed
     update_cache: yes
     cache_valid_time: 3600
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   with_items:
     - python-pycurl
     - python-psycopg2
@@ -17,6 +20,9 @@
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: ACCC4CF8
     state: present
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   when: postgresql_repository == "official"
 
 - name: install official repository
@@ -25,6 +31,9 @@
     repo: "deb https://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb.codename }}-pgdg main"
     state: present
     update_cache: yes
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   when: postgresql_repository == "official"
 
 - name: install postgresql package
@@ -36,6 +45,8 @@
     cache_valid_time: 3600
   environment:
     RUNLEVEL: 1
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
 
 - name: install libpq-dev package
   sudo: yes
@@ -44,6 +55,9 @@
     state: installed
     update_cache: yes
     cache_valid_time: 3600
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   when: postgresql_dev
 
 - name: install contrib package
@@ -53,6 +67,9 @@
     state: installed
     update_cache: yes
     cache_valid_time: 3600
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   when: postgresql_contrib
 
 - name: install repmgr package
@@ -62,6 +79,9 @@
     state: installed
     update_cache: yes
     cache_valid_time: 3600
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   when: postgresql_repmgr
 
 - name: install postgresql extension whitelisting
@@ -69,6 +89,9 @@
   apt:
     pkg: "postgresql-{{ postgresql_version }}-pgextwlist"
     state: present
+  environment:
+    http_proxy: "{{ postgresql_http_proxy }}"
+    https_proxy: "{{ postgresql_http_proxy }}"
   when: '"pg_extwlist" in postgresql_extensions'
 
 
