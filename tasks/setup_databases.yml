@@ -11,3 +11,13 @@
     lc_ctype: "{{ item.locale | default(postgresql_locale) }}"
     state: "{{ item.state | default('present') }}"
   with_items: postgresql_databases
+
+- name: create databases extensions
+  sudo_user: "{{ postgresql_superuser }}"
+  postgresql_ext:
+    name: "{{ item.1 }}"
+    db: "{{ item.0.database }}"
+#  when: item.0.extensions is defined
+  with_subelements_safe:
+    - postgresql_databases
+    - extensions
