@@ -1,0 +1,5 @@
+#!/bin/bash
+repmgr standby promote -f {{ postgresql_repmgr_conf  }}
+{% if (postgresql_cluster_name is defined) and (postgresql_cluster_domain is defined) %}
+route53-dns --dnsname {{ postgresql_cluster_dnsname }} --domain {{ postgresql_cluster_domain }}
+{% endif %}

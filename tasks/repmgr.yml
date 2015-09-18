@@ -39,6 +39,22 @@
     owner: "{{ postgresql_superuser }}"
     group: "{{ postgresql_superuser }}"
 
+- name: repmgr | copy dns updater
+  copy:
+    src: "route53-dns"
+    dest: "/usr/bin/route53-dns"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+    mode: "0755"
+
+- name: repmgr | copy promote script
+  template:
+    src: "promote.j2"
+    dest: "/usr/bin/promote.sh"
+    owner: "{{ postgresql_superuser }}"
+    group: "{{ postgresql_superuser }}"
+    mode: "0755"
+
 - name: repmgr | check cluster status
   sudo_user: "{{ postgresql_superuser }}"
   command: "repmgr -f {{ postgresql_repmgr_conf  }} cluster show"
