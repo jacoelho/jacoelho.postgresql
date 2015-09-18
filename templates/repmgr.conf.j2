@@ -17,5 +17,5 @@ reconnect_attempts=6
 reconnect_interval=10
 
 failover=automatic
-promote_command='repmgr standby promote -f {{ postgresql_repmgr_conf }}'
+promote_command='/usr/bin/repmgr-promote.sh'
 follow_command='repmgr standby follow -f {{ postgresql_repmgr_conf }} -W'

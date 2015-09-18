@@ -50,7 +50,7 @@
 - name: repmgr | copy promote script
   template:
     src: "promote.j2"
-    dest: "/usr/bin/promote.sh"
+    dest: "/usr/bin/repmgr-promote.sh"
     owner: "{{ postgresql_superuser }}"
     group: "{{ postgresql_superuser }}"
     mode: "0755"
