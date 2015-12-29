@@ -11,10 +11,11 @@ Ansible role to manage postgresql servers, supports:
 
 ### How to use
 
-Install lookup plugin:
+Install lookup plugin by adding the path to `tests/lookup_plugins` to your ansible.cfg file
 
-```shell
-tests/lookup_plugins
+```
+[default]
+lookup_plugins = jacoelho.postgresql/tests/lookup_plugins
 ```
 
 
